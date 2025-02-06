@@ -1,0 +1,6 @@
+module Pods_AudioDiary {
+  umbrella header "Pods-AudioDiary-umbrella.h"
+
+  export *
+  module * { export * }
+}
