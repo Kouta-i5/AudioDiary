@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
+import * as Speech from 'expo-speech';
+import Voice from '@react-native-voice/voice';
 
 const styles = StyleSheet.create({
   container: {
@@ -51,6 +53,18 @@ const styles = StyleSheet.create({
   sendButtonText: {
     color: 'white',
   },
+  micButton: {
+    backgroundColor: '#34C759',
+    padding: 12,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  micButtonRecording: {
+    backgroundColor: '#FF3B30',
+  },
+  micButtonText: {
+    color: 'white',
+  },
 });
 
 interface ChatGPTMessage {
@@ -62,6 +76,19 @@ export default function Home() {
   const [messages, setMessages] = useState<ChatGPTMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+
+  useEffect(() => {
+    Voice.onSpeechResults = (e) => {
+      if (e.value && e.value[0]) {
+        setInputText(e.value[0]);
+      }
+    };
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
 
   const sendMessage = async () => {
     if (!inputText.trim() || isLoading) return;
@@ -106,6 +133,26 @@ export default function Home() {
     }
   };
 
+  const startSpeechToText = async () => {
+    try {
+      setIsRecording(true);
+      await Voice.start('ja-JP');
+    } catch (error) {
+      console.error('音声認識エラー:', error);
+      alert('音声認識に失敗しました');
+      setIsRecording(false);
+    }
+  };
+
+  const stopSpeechToText = async () => {
+    try {
+      await Voice.stop();
+      setIsRecording(false);
+    } catch (error) {
+      console.error('音声認識停止エラー:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.chatContainer}>
@@ -126,6 +173,13 @@ export default function Home() {
         ))}
       </ScrollView>
       <View style={styles.inputContainer}>
+        <TouchableOpacity
+          style={[styles.micButton, isRecording && styles.micButtonRecording]}
+          onPress={isRecording ? stopSpeechToText : startSpeechToText}
+          disabled={isLoading}
+        >
+          <Text style={styles.micButtonText}>🎤</Text>
+        </TouchableOpacity>
         <TextInput
           style={styles.input}
           value={inputText}
