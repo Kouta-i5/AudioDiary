@@ -48,4 +48,4 @@ with_node \
   --target "/Users/kouta_i5/Github/Personal/AudioDiary/ios/Pods/Target Support Files/Pods-AudioDiary/ExpoModulesProvider.swift" \
   --entitlement "/Users/kouta_i5/Github/Personal/AudioDiary/ios/AudioDiary/AudioDiary.entitlements" \
   --platform "apple" \
-  --packages "expo" "expo-asset" "expo-constants" "expo-dev-launcher" "expo-dev-menu" "expo-file-system" "expo-font" "expo-keep-awake" "expo-speech" "expo-speech-recognition"
+  --packages "expo" "expo-asset" "expo-constants" "expo-file-system" "expo-font" "expo-keep-awake"
